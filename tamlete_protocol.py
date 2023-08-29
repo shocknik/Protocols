@@ -2,14 +2,15 @@ import re
 import os
 import docx
 import datetime
-from docx import Document, oxml
+from setting import standarts, list_head_SI_IO, list_mean_SI_IO
+from docx import Document
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Cm, Mm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
 from docx.enum.section import WD_SECTION_START, WD_ORIENTATION
 from borders import set_cell_border, add_page_number
-from backend_read import get_cable_mark, get_specifications, get_name_specifications, get_list_text_par
+from backend_read import get_cable_mark, get_specifications, get_name_specifications, get_list_text_par, create_marker_list, change_font
 
 doc = Document()
 num_page = 21
@@ -190,12 +191,47 @@ head_6_1 = doc.add_paragraph().add_run('Испытания проводилис�
 - относительная влажность воздуха -  %;\n\
 - атмосферное давление -  кПа.')
 
-head_7 = doc.add_paragraph().add_run('Методы испытаний')
+head_7 = doc.add_paragraph().add_run('7 Методы испытаний')
 head_7.font.size = Pt(12)
 head_7.bold = True
 head_7_1 = doc.add_paragraph().add_run('Методы испытаний в соответствии с требованиями:\n')
 
+"""Создаем список стандартов"""
+for standart in standarts:
+    st = doc.add_paragraph(standart, 'List Paragraph')
+    unordered = "1" # задаем номер и типа маркера/отступа
+    create_marker_list(st, unordered)
 
+
+head_8 = doc.add_paragraph().add_run('8 Испытательное оборудование и средства измерений')
+head_8.font.size = Pt(12)
+head_8.bold = True
+head_8_1 = doc.add_paragraph().add_run('Применяемые испытательное оборудование (ИО) и средства измерений (СИ) представлены в таблице 1.')
+head_8_2 = doc.add_paragraph('Таблица 1')
+head_8_2.paragraph_format.space_after = Pt(0)
+change_font(head_8_2.runs[0])
+
+
+"""Создаем таблицу с СИ и ИО"""
+table_SI_IO = doc.add_table(2, 7)
+table_SI_IO.style = 'Table Grid'
+head_cells = table_SI_IO.rows[0].cells
+head_cells_num = table_SI_IO.rows[1].cells
+for i, item in enumerate(list_head_SI_IO):
+    p = head_cells[i].paragraphs[0]
+    p.add_run(item)
+    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    p = head_cells_num[i].paragraphs[0]
+    p.add_run(str(i+1))
+    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+"""Заполняем таблицу приборами"""
+for row in list_mean_SI_IO:
+    cells = table_SI_IO.add_row().cells
+    for i, list_mean_SI_IO in enumerate(row):
+        cells[i].text = str(list_mean_SI_IO)
+    
+    
 
 
 

@@ -37,8 +37,11 @@ import re
 import os
 import docx
 from docx import Document
-from docx.shared import Inches, Cm
+from docx.shared import Inches, Cm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
+from docx.oxml import OxmlElement
+from docx.oxml.text import font
+from docx.oxml.ns import qn
 
 document = Document()
 
@@ -116,3 +119,27 @@ def get_list_methods() -> str:
             list_methods.append(table.cell(i, 3).text)
     return list_methods
             
+def create_marker_list(paragraph, list_type):
+    "функция создания маркированного списка"
+    p = paragraph._p # доступ к элементам xml параграфов
+    pPr = p.get_or_add_pPr() # доступ к свойствам параграфов
+    numPr = OxmlElement('w:numPr') # создать элемент свойств числа
+    numId =OxmlElement('w:numId') # создать элемент маркера и тип
+    numId.set(qn('w:val'), list_type) # тип списка настройка отступов
+    numPr.append(numId) # добавить тип маркера в список свойств числа
+    pPr.append(numPr) # добавить свойства числа в абзац
+    
+    
+def change_font(obj_run):
+    obj_r = obj_run._r
+    rPr = obj_r.get_or_add_rPr()
+    space = OxmlElement('w:spacing')
+    space.set(qn('w:val'), '20')
+    rPr.append(space)
+    
+
+
+
+# tc = cell._tc
+# tcPr = tc.get_or_add_tcPr()
+# tcBorders = tcPr.first_child_found_in("w:tcBorders")
