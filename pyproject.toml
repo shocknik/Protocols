@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "protoсols"
+version = "0.1.0"
+description = ""
+authors = ["shocknik <teilor2010@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-docx = "^0.8.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

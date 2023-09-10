@@ -42,6 +42,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
 from docx.oxml import OxmlElement
 from docx.oxml.text import font
 from docx.oxml.ns import qn
+from borders import set_cell_border
 
 document = Document()
 
@@ -131,15 +132,48 @@ def create_marker_list(paragraph, list_type):
     
     
 def change_font(obj_run):
+    """Функция для формирования межсимвольного интервала"""
     obj_r = obj_run._r
     rPr = obj_r.get_or_add_rPr()
     space = OxmlElement('w:spacing')
     space.set(qn('w:val'), '20')
     rPr.append(space)
     
+def border_form(rows: int, cols: int, table, border="single", sz=12):
+    for row in range(0, rows):
+        for col in range(0, cols):
+            if row == 0:
+                set_cell_border(table.cell(row, col), top={"sz": sz, "val": border, "color": "black", "space": "0"})
+            if row == rows - 1: 
+                set_cell_border(table.cell(row, col), bottom={"sz": sz+3, "val": border, "color": "black", "space": "0"})
+            if col == 0:
+                set_cell_border(table.cell(row, col), start={"sz": sz, "val": border, "color": "black", "space": "0"})
+            if col == cols - 1:
+                set_cell_border(table.cell(row, col), end={"sz": sz, "val": border, "color": "black", "space": "0"})
 
 
+def func_union_cells(table, **cells):
+    """
+    Функция, которая объединяет яйчейки в таблице.
+    На вход принимает имя таблицы и словарь с яйчейками, которые нужно объединить(попарно)   
+    """
+    for i in range(1, len(cells), 2):
+        table.cell(cells[str(i)][0], cells[str(i)][1]).merge(table.cell(cells[str(i+1)][0], cells[str(i+1)][1]))
 
-# tc = cell._tc
-# tcPr = tc.get_or_add_tcPr()
-# tcBorders = tcPr.first_child_found_in("w:tcBorders")
+def filling_table_heads(table_name, list_heads):
+    """
+    Функция заполнения заголовков в таблицах
+    Для заполнения заголовкав используется:
+    - список для заголовков соответствующей таблицы в settings
+    - имя таблицы
+    """
+    
+    head_cells = table_name.rows[0].cells
+    head_cells_num = table_name.rows[1].cells
+    for i, item in enumerate(list_heads):
+        p = head_cells[i].paragraphs[0]
+        p.add_run(item)
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        p = head_cells_num[i].paragraphs[0]
+        p.add_run(str(i+1))
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER

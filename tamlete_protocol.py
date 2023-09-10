@@ -2,7 +2,7 @@ import re
 import os
 import docx
 import datetime
-from setting import standarts, list_head_SI_IO, list_mean_SI_IO
+from setting import standarts, list_head_SI_IO, list_mean_SI_IO, list_head_test_table
 from docx import Document
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
@@ -10,11 +10,19 @@ from docx.shared import Inches, Cm, Mm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
 from docx.enum.section import WD_SECTION_START, WD_ORIENTATION
 from borders import set_cell_border, add_page_number
-from backend_read import get_cable_mark, get_specifications, get_name_specifications, get_list_text_par, create_marker_list, change_font
+from backend_read import get_cable_mark,\
+    get_specifications,\
+    get_name_specifications,\
+    get_list_text_par,\
+    create_marker_list,\
+    change_font, border_form,\
+    func_union_cells,\
+    filling_table_heads
 
 doc = Document()
 num_page = 21
 
+"""Формирование альбомной формы, шрифта и отступов """
 style = doc.styles['Normal']
 style.font.name = 'Times New Roman'
 style.font.size = Pt(12)
@@ -33,18 +41,7 @@ title.bottom_margin = Mm(13)
 
 title_table = doc.add_table(rows=7, cols=3)
 
-for i in range(0, 7):
-    for j in range(0, 3):
-        if i == 0:
-            set_cell_border(title_table.cell(i, j), top={"sz": 12, "val": "single", "color": "black", "space": "0"})
-        if i == 6: 
-            set_cell_border(title_table.cell(i, j), bottom={"sz": 14, "val": "single", "color": "black", "space": "0"})
-        if j == 0:
-            set_cell_border(title_table.cell(i, j), start={"sz": 12, "val": "single", "color": "black", "space": "0"})
-        if j == 2:
-            set_cell_border(title_table.cell(i, j), end={"sz": 12, "val": "single", "color": "black", "space": "0"})
-            
-            
+border_form(7, 3, title_table)        
 
 cell_header = title_table.cell(0, 1)
 cell_header.paragraphs[0].add_run('Общество с ограниченной ответственностью НИЦ «Кабель-Тест»\n(ООО НИЦ «Кабель-Тест»)').font.size = Pt(14)
@@ -206,7 +203,7 @@ for standart in standarts:
 head_8 = doc.add_paragraph().add_run('8 Испытательное оборудование и средства измерений')
 head_8.font.size = Pt(12)
 head_8.bold = True
-head_8_1 = doc.add_paragraph().add_run('Применяемые испытательное оборудование (ИО) и средства измерений (СИ) представлены в таблице 1.')
+head_8_1 = doc.add_paragraph().add_run('9 Применяемые испытательное оборудование (ИО) и средства измерений (СИ) представлены в таблице 1.')
 head_8_2 = doc.add_paragraph('Таблица 1')
 head_8_2.paragraph_format.space_after = Pt(0)
 change_font(head_8_2.runs[0])
@@ -215,15 +212,7 @@ change_font(head_8_2.runs[0])
 """Создаем таблицу с СИ и ИО"""
 table_SI_IO = doc.add_table(2, 7)
 table_SI_IO.style = 'Table Grid'
-head_cells = table_SI_IO.rows[0].cells
-head_cells_num = table_SI_IO.rows[1].cells
-for i, item in enumerate(list_head_SI_IO):
-    p = head_cells[i].paragraphs[0]
-    p.add_run(item)
-    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    p = head_cells_num[i].paragraphs[0]
-    p.add_run(str(i+1))
-    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+filling_table_heads(table_SI_IO, list_head_SI_IO)
 
 """Заполняем таблицу приборами"""
 for row in list_mean_SI_IO:
@@ -231,7 +220,39 @@ for row in list_mean_SI_IO:
     for i, list_mean_SI_IO in enumerate(row):
         cells[i].text = str(list_mean_SI_IO)
     
-    
+head_9 = doc.add_paragraph('10 Результаты измерений\n')
+head_9.runs[0].font.size = Pt(12)
+head_9.runs[0].bold = True
+head_9.add_run('10.1 Результаты испытаний на соответствие техническим требованиям представлены в таблице 2.')
+head_9.runs[1].font.size = Pt(12)
+
+
+"""Формирование таблицы испытаний"""
+test_table = doc.add_table(rows=2, cols=7)
+cells_union = {
+    "1": [0, 1],
+    "2": [0, 2],
+    "3": [0, 3],
+    "4": [0, 4],
+    "5": [0, 0],
+    "6": [1, 0],
+    "7": [0, 5],
+    "8": [1, 5],
+    "9": [0, 6],
+    "10": [1, 6],
+}
+
+border_form(2, 7, test_table, border="double", sz=6)
+func_union_cells(test_table, **cells_union)
+test_table.style = 'Table Grid'
+for j in range(2):
+    head_cells = test_table.rows[j].cells
+    for i, item in enumerate(list_head_test_table):
+        p = head_cells[i].paragraphs[0]
+        p.add_run(item)
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+
 
 
 
