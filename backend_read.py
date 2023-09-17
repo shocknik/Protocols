@@ -160,27 +160,10 @@ def func_union_cells(table, **cells):
     for i in range(1, len(cells), 2):
         table.cell(cells[str(i)][0], cells[str(i)][1]).merge(table.cell(cells[str(i+1)][0], cells[str(i+1)][1]))
 
-def filling_table_heads(table_name, list_heads):
-    """
-    Функция заполнения заголовков в таблицах
-    Для заполнения заголовкав используется:
-    - список для заголовков соответствующей таблицы в settings
-    - имя таблицы(действует только для таблицы с приборами)
-    """
-    
-    head_cells = table_name.rows[0].cells
-    head_cells_num = table_name.rows[1].cells
-    for i, item in enumerate(list_heads):
-        p = head_cells[i].paragraphs[0]
-        p.add_run(item)
-        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        p = head_cells_num[i].paragraphs[0]
-        p.add_run(str(i+1))
-        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         
 def filling_table_heads_all(table_name, list_heads):
     """
-    Функция заполнения заголовков в таблицах
+    Универсальная функция заполнения заголовков в таблицах
     Для заполнения заголовкав используется:
     - список для заголовков соответствующей таблицы в settings
     - имя таблицы
@@ -200,8 +183,12 @@ def filling_table_heads_all(table_name, list_heads):
         p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
             
-                
+def filling_table_colls_means(table_name, num_coll, list_name):
+    """Функция заполнения определенного столбца значениями из списка"""
     
+    
+                    
+
     
     
             

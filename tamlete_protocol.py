@@ -17,8 +17,11 @@ from backend_read import get_cable_mark,\
     create_marker_list,\
     change_font, border_form,\
     func_union_cells,\
-    filling_table_heads,\
-    filling_table_heads_all
+    get_list_par_from_tables,\
+    filling_table_heads_all,\
+    get_list_requarements,\
+    get_list_methods
+from create_table import *
 
 doc = Document()
 num_page = 21
@@ -247,9 +250,7 @@ border_form(2, 7, test_table, border="double", sz=6)
 func_union_cells(test_table, **cells_union)
 test_table.style = 'Table Grid'
 filling_table_heads_all(test_table, list_head_test_table)
-
-
-
+Electric_test_table.create_el_resist(test_table, 3.21, 2123)
 
 
 
