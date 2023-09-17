@@ -165,7 +165,7 @@ def filling_table_heads(table_name, list_heads):
     Функция заполнения заголовков в таблицах
     Для заполнения заголовкав используется:
     - список для заголовков соответствующей таблицы в settings
-    - имя таблицы
+    - имя таблицы(действует только для таблицы с приборами)
     """
     
     head_cells = table_name.rows[0].cells
@@ -177,3 +177,34 @@ def filling_table_heads(table_name, list_heads):
         p = head_cells_num[i].paragraphs[0]
         p.add_run(str(i+1))
         p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        
+def filling_table_heads_all(table_name, list_heads):
+    """
+    Функция заполнения заголовков в таблицах
+    Для заполнения заголовкав используется:
+    - список для заголовков соответствующей таблицы в settings
+    - имя таблицы
+    """
+    unique = list() # - список для формирования набора ячеек построково
+    cells_list = list() # - список самих ячеек, понадобится для заполнения
+    for row in table_name.rows:
+        for cell in row.cells:
+            tc = cell._tc # - доступ к свойствам ячеки
+            cell_loc = (tc.top, tc.bottom, tc.left, tc.right) # - координаты ячеек по номеру границы
+            if cell_loc not in unique:
+                unique.append(cell_loc) # - формирования списка ячеек
+                cells_list.append(cell)
+    for i, item in enumerate(list_heads):
+        p = cells_list[i].paragraphs[0]
+        p.add_run(item)
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+            
+                
+    
+    
+    
+            
+    
+    
+    

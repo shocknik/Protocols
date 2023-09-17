@@ -17,7 +17,8 @@ from backend_read import get_cable_mark,\
     create_marker_list,\
     change_font, border_form,\
     func_union_cells,\
-    filling_table_heads
+    filling_table_heads,\
+    filling_table_heads_all
 
 doc = Document()
 num_page = 21
@@ -212,7 +213,7 @@ change_font(head_8_2.runs[0])
 """Создаем таблицу с СИ и ИО"""
 table_SI_IO = doc.add_table(2, 7)
 table_SI_IO.style = 'Table Grid'
-filling_table_heads(table_SI_IO, list_head_SI_IO)
+filling_table_heads_all(table_SI_IO, list_head_SI_IO)
 
 """Заполняем таблицу приборами"""
 for row in list_mean_SI_IO:
@@ -245,12 +246,9 @@ cells_union = {
 border_form(2, 7, test_table, border="double", sz=6)
 func_union_cells(test_table, **cells_union)
 test_table.style = 'Table Grid'
-for j in range(2):
-    head_cells = test_table.rows[j].cells
-    for i, item in enumerate(list_head_test_table):
-        p = head_cells[i].paragraphs[0]
-        p.add_run(item)
-        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+filling_table_heads_all(test_table, list_head_test_table)
+
+
 
 
 
