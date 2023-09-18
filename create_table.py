@@ -10,21 +10,27 @@ from borders import set_cell_border
 
 class Electric_test_table:
     
-    def create_el_resist(table_name, requrement: str, method: str):
-        """Сопротивление жилы
-        requrement - номер пункта требований
-        method - номер пункта метода
-        """
+    
+    def __init__(self, table_name, requrement: str, method: str, mean_req: str, mean_method: str, test_record: str) -> None:
+        self.table_name = table_name
+        self.requrement = requrement
+        self.method = method
+        self.mean_req = mean_req
+        self.mean_method = mean_method
+        self.test_record = test_record
+    
+    def create_row_for_test(self):
+        """метод создающий строку для вида испытаний"""
         items = [
-            "Электрическое сопротивление токопроводящих жил, пересчи-танное на 1 км длины и темпера-туру 20 С, Ом",
-            requrement,
-            method,
-            'Значение требования',
-            'Допуск',
-            'Измеренное значение',
-            'Соответствует',
+            self.test_record,
+            self.requrement,
+            self.method,
+            self.mean_req,
+            self.mean_method,
         ]
-        cell = table_name.add_row().cells
+        cell = self.table_name.add_row().cells
         for i, item in enumerate(items):
             cell[i].text = str(item)
-            cell[i].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+            cell[i].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            cell[0].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    

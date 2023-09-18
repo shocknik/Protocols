@@ -2,7 +2,7 @@ import re
 import os
 import docx
 import datetime
-from setting import standarts, list_head_SI_IO, list_mean_SI_IO, list_head_test_table
+from setting import standarts, list_head_SI_IO, list_mean_SI_IO, list_head_test_table, list_records_test
 from docx import Document
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
@@ -250,9 +250,16 @@ border_form(2, 7, test_table, border="double", sz=6)
 func_union_cells(test_table, **cells_union)
 test_table.style = 'Table Grid'
 filling_table_heads_all(test_table, list_head_test_table)
-Electric_test_table.create_el_resist(test_table, 3.21, 2123)
 
 
 
 
+
+list_4 = list(map(list, zip(get_list_par_from_tables(), get_list_requarements(), get_list_methods())))
+
+for test in list_4:
+    object_test = Electric_test_table(test_table, test[1], test[2], 1, 2, test[0])
+    object_test.create_row_for_test()
+    
+    
 doc.save('title.docx')

@@ -93,17 +93,16 @@ def get_name_specifications() -> str:
             return result[0]
 
 
-def get_list_par_from_tables() -> str:
-    """
-    Получает список параметров из таблицы в программе
-    """
+def get_list_par_from_tables() -> list:
+    """Получает список параметров из таблицы в программе"""
     list_par = []
     for table in doc.tables:
         for i in range(2, len(table.rows)):
             list_par.append(table.cell(i, 1).text)
     return list_par
             
-def get_list_requarements() -> str:
+            
+def get_list_requarements() -> list:
     """Полчает список пунктов требований"""
     list_req = []
     for table in doc.tables:
@@ -112,7 +111,7 @@ def get_list_requarements() -> str:
     return list_req
                 
 
-def get_list_methods() -> str:
+def get_list_methods() -> list:
     """Полчает список пунктов методов"""
     list_methods = []
     for table in doc.tables:
