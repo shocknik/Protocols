@@ -139,6 +139,7 @@ def change_font(obj_run):
     rPr.append(space)
     
 def border_form(rows: int, cols: int, table, border="single", sz=12):
+    """Функция, которая рисует рамку для указанной таблице, вокруг указанных яйчеек"""
     for row in range(0, rows):
         for col in range(0, cols):
             if row == 0:
@@ -149,6 +150,21 @@ def border_form(rows: int, cols: int, table, border="single", sz=12):
                 set_cell_border(table.cell(row, col), start={"sz": sz, "val": border, "color": "black", "space": "0"})
             if col == cols - 1:
                 set_cell_border(table.cell(row, col), end={"sz": sz, "val": border, "color": "black", "space": "0"})
+
+def table_inner_border_vertical(rows: int, cols: int, table, border="single", sz=12, vert=True):
+    """
+    Функция которая строит внутренние вертикальные границы.
+    Если vert = False, то рисует еще и горизонтальные границы
+    
+    """
+    for row in range(0, rows):
+        for col in range(0, cols):
+            set_cell_border(table.cell(row, col), start={"sz": sz, "val": border, "color": "black", "space": "0"})
+            if vert is False:
+                set_cell_border(table.cell(row, col), bottom={"sz": sz, "val": border, "color": "black", "space": "0"})
+            
+
+
 
 
 def func_union_cells(table, **cells):
@@ -181,9 +197,14 @@ def filling_table_heads_all(table_name, list_heads):
         p.add_run(item)
         p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
-            
-def filling_table_colls_means(table_name, num_coll, list_name):
-    """Функция заполнения определенного столбца значениями из списка"""
+
+def func_def_test_by_program(dict_tests -> dict, list_tests -> list):
+    """
+    Функция, которая чиатет испытание из программы и сопостовляет ему формулировку для протокола
+    dict_tests - словарь с категоризированными названиями испытаний
+    list_tests - список испытаний, прочитанный из программы
+    """
+    
     
     
                     
