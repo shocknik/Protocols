@@ -43,6 +43,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.text import font
 from docx.oxml.ns import qn
 from borders import set_cell_border
+from setting import *
 
 document = Document()
 
@@ -145,11 +146,19 @@ def border_form(rows: int, cols: int, table, border="single", sz=12):
             if row == 0:
                 set_cell_border(table.cell(row, col), top={"sz": sz, "val": border, "color": "black", "space": "0"})
             if row == rows - 1: 
-                set_cell_border(table.cell(row, col), bottom={"sz": sz+3, "val": border, "color": "black", "space": "0"})
+                set_cell_border(table.cell(row, col), bottom={"sz": sz, "val": border, "color": "black", "space": "0"})
             if col == 0:
                 set_cell_border(table.cell(row, col), start={"sz": sz, "val": border, "color": "black", "space": "0"})
             if col == cols - 1:
                 set_cell_border(table.cell(row, col), end={"sz": sz, "val": border, "color": "black", "space": "0"})
+
+def border_around_cell(cell, border="double", sz=6):
+    set_cell_border(cell, top={"sz": sz, "val": border, "color": "black", "space": "0"})
+    set_cell_border(cell, bottom={"sz": sz, "val": border, "color": "black", "space": "0"})
+    set_cell_border(cell, start={"sz": sz, "val": border, "color": "black", "space": "0"})
+    set_cell_border(cell, end={"sz": sz, "val": border, "color": "black", "space": "0"})
+    """Функция рисующая границы вокруг ячейки"""
+
 
 def table_inner_border_vertical(rows: int, cols: int, table, border="single", sz=12, vert=True):
     """
@@ -162,10 +171,7 @@ def table_inner_border_vertical(rows: int, cols: int, table, border="single", sz
             set_cell_border(table.cell(row, col), start={"sz": sz, "val": border, "color": "black", "space": "0"})
             if vert is False:
                 set_cell_border(table.cell(row, col), bottom={"sz": sz, "val": border, "color": "black", "space": "0"})
-            
-
-
-
+           
 
 def func_union_cells(table, **cells):
     """
@@ -176,12 +182,13 @@ def func_union_cells(table, **cells):
         table.cell(cells[str(i)][0], cells[str(i)][1]).merge(table.cell(cells[str(i+1)][0], cells[str(i+1)][1]))
 
         
-def filling_table_heads_all(table_name, list_heads):
+def filling_table_heads_all(table_name, list_heads, font_sz=10):
     """
     Универсальная функция заполнения заголовков в таблицах
     Для заполнения заголовкав используется:
     - список для заголовков соответствующей таблицы в settings
     - имя таблицы
+    - аргумент для задания размера шрифта font_sz
     """
     unique = list() # - список для формирования набора ячеек построково
     cells_list = list() # - список самих ячеек, понадобится для заполнения
@@ -196,22 +203,54 @@ def filling_table_heads_all(table_name, list_heads):
         p = cells_list[i].paragraphs[0]
         p.add_run(item)
         p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        p.runs[0].font.size = Pt(font_sz)
 
 
-def func_def_test_by_program(dict_tests -> dict, list_tests -> list):
+def func_def_test_by_program(dict_tests: dict, union_tests_dict: dict) -> list:
     """
-    Функция, которая чиатет испытание из программы и сопостовляет ему формулировку для протокола
-    dict_tests - словарь с категоризированными названиями испытаний
-    list_tests - список испытаний, прочитанный из программы
+    Функция, которая читает испытание из программы и сопостовляет ему формулировку для протокола
+    dict_tests - словарь с названиями испытаний из ПМИ
+    union_tests_dict - словарь для сопоставления названия программы и формулировки в протоколе
     """
-    
-    
-    
-                    
+    list_form_protocols = []
+    for value in dict_tests.values():
+        if value in union_tests_dict.keys() and type(union_tests_dict[value]) == list:
+            for i in union_tests_dict[value]:
+                list_form_protocols.append(i)
+        elif value in union_tests_dict.keys():
+            list_form_protocols.append(union_tests_dict[value])
+        else:
+            pass
+    return list_form_protocols
 
+                         
+def func_def_category_tests(list_form_protocols: list) -> dict:
+    """Функция, которая определяет категорию испытаний и возвращает словарь, где
+    ключ - номер категории, а значение список испытаний
+    list_form_protocols - список с формулировками для протокола, выбранными из ПМИ
+    list_records_test - словарь с категориями в виде числа и списками со всеми формулировками
+    dict_for_temp_protocol - новый словарь сформированный из первых двух с ключем категорий и со значением
+    в виде списка испытаний выбранных из программы
+    """
+    dict_for_temp_protocol = {}
+    for test in list_form_protocols:
+        for key, value in list_records_test.items():
+            if test in value:
+                dict_for_temp_protocol[key] = dict_for_temp_protocol.get(key, []) + [test]
+            else:
+                pass
     
+    return dict_for_temp_protocol
+        
     
-            
-    
-    
+def func_calculate_cells(row) -> int:
+    """Функция считающая количество ячеек в строке"""
+    counted_cells = set()
+    for cell in row:
+        tc = cell._tc
+        cell_loc = (tc.top, tc.bottom, tc.left, tc.right)
+        counted_cells.add(cell_loc)
+    return(len(counted_cells))
+        
+
     

@@ -234,6 +234,7 @@ head_9.runs[1].font.size = Pt(12)
 
 """Формирование таблицы испытаний"""
 test_table = doc.add_table(rows=2, cols=7)
+
 cells_union = {
     "1": [0, 1],
     "2": [0, 2],
@@ -246,21 +247,24 @@ cells_union = {
     "9": [0, 6],
     "10": [1, 6],
 }
+test_table.cell(0, 0).width = Cm(6)
 table_inner_border_vertical(2, 7, test_table, sz=6, vert=False)
+
 border_form(2, 7, test_table, border="double", sz=6)
 func_union_cells(test_table, **cells_union)
+
+
 
 filling_table_heads_all(test_table, list_head_test_table)
 
 
 
-
-
+object_row = Test_Table(test_table, 'Электрика', '5.2.2.1', '8.2.2.1', '25.0', 'not more')
+object_row.row_for_navigation()
+object_row.title_row('1', 'Внешние факторы')
 list_4 = list(map(list, zip(get_list_par_from_tables(), get_list_requarements(), get_list_methods())))
 
-object_test = Test_Table_Row(test_table, 'Specif', 'method', 1, 2, 'Climatic')
-object_test.create_row_for_test()
-# object_test.create_row_param()
-table_inner_border_vertical(3, 7, test_table, sz=6)
+object_row.create_simple_row('1.1')
+
 
 doc.save('title.docx')
