@@ -10,55 +10,6 @@ from docx.oxml.ns import qn
 from borders import set_cell_border
 from backend_read import border_form, border_around_cell, table_inner_border_vertical, func_calculate_cells
 
-class Test_Table_Row:
-    """Класс для создания строк в таблице испытаний
-    """
-    def __init__(self, table_name, requrement: str, method: str, mean_req: str, mean_method: str, test_record: str) -> None:
-        self.table_name = table_name
-        self.requrement = requrement
-        self.method = method
-        self.mean_req = mean_req
-        self.mean_method = mean_method
-        self.test_record = test_record
-    
-    
-    def create_row_for_test(self):
-        """метод создающий строку для вида испытаний"""
-        items = [
-            self.test_record,
-            self.requrement,
-            self.method,
-            self.mean_req,
-            self.mean_method,
-        ]
-        cell = self.table_name.add_row().cells
-        for i, item in enumerate(items):
-            cell[i].text = str(item)
-            cell[i].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            cell[0].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        set_cell_border(cell[6], end={"sz": 6, "val": 'double', "space": "0"})
-        set_cell_border(cell[0], start={"sz": 6, "val": "double", "space": "0"})
-        
-    
-    def create_row_param(self):
-        """Метод для создания строк с параметрами и условиями испытаний"""
-        cell_param = self.table_name.add_row().cells
-        cell_param[0].text = "Параметры образцов и условия испытаний\n\
-- длина образца\n\
-- температура выдержки в климатической камере\n\
-- время выдержки в климатической камере\n\
-- диаметр бухты"
-        cell_criteria = self.table_name.add_row().cells
-        cell_criteria[0].text = "Критерии годности:\n\
-- внешний вид\n"
-
-        set_cell_border(cell_param[1], top={"sz": 12, "val": "none", "color": "black", "space": "0"})
-        set_cell_border(cell_criteria[1], top={"sz": 12, "val": 'hidden', "color": "black", "space": "0"})
-        set_cell_border(cell_param[6], end={"sz": 6, "val": "double", "space": "0"})
-        set_cell_border(cell_criteria[6], end={"sz": 6, "val": 'double', "space": "0"})
-        set_cell_border(cell_param[0], start={"sz": 6, "val": "double", "space": "0"})
-        set_cell_border(cell_criteria[0], start={"sz": 6, "val": 'double', "space": "0"})
-        
 class Test_Table:
     """Класс таблицы"""
     
@@ -70,15 +21,18 @@ class Test_Table:
         self.mean_req = mean_req
         self.limit = limit
         
+        
     def row_for_navigation(self):
         cell = self.table_name.add_row().cells
-        func_calculate_cells(cell)
-        
-        
-        
-        
-    
-    
+        for i in range(1, func_calculate_cells(cell)+1):
+            cell[i-1].text = str(i)
+            cell[i-1].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            cell[i-1].paragraphs[0].runs[0].font.size = Pt(10)
+            cell[i-1].paragraphs[0].paragraph_format.space_after = Pt(0)
+            set_cell_border(cell[i-1], end={"sz": 6, "val": 'single', "space": "0"})
+        set_cell_border(cell[0], start={"sz": 6, "val": 'double', "space": "0"})
+        set_cell_border(cell[func_calculate_cells(cell)-1], end={"sz": 6, "val": 'double', "space": "0"})
+
     
     def title_row(self, num, name):
         """
@@ -96,19 +50,59 @@ class Test_Table:
         border_around_cell(cell[0])
         
     
-    def create_simple_row(self, num):
+    def create_simple_row(self, num, tag=True):
         """Метод, который создает единичную строку под простые испытания"""      
         cell = self.table_name.add_row().cells
         cell[0].text = str(num)
         cell[0].text += str(self.test_record)
+        cell[0].paragraphs[0].runs[0].font.size = Pt(10)
+        for i, item in enumerate((self.requrement, self.method, self.mean_req, self.limit), start=1):
+            cell[i].text = str(item)
+            cell[i].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            cell[i].paragraphs[0].runs[0].font.size = Pt(10)
+        for i in range(1, func_calculate_cells(cell)+1):
+            set_cell_border(cell[i-1], end={"sz": 6, "val": 'single', "space": "0"})
+            if tag is True:
+                set_cell_border(cell[i-1], bottom={"sz": 6, "val": 'single', "space": "0"}) 
+        set_cell_border(cell[0], start={"sz": 6, "val": 'double', "space": "0"})
+        set_cell_border(cell[func_calculate_cells(cell)-1], end={"sz": 6, "val": 'double', "space": "0"})
+
     
-    
-    def create_sample_par_row(self):
+    def create_sample_par_row(self, num, **kwargs):
         """Метод, который создает доп строку под параметры образца"""
-        pass
+        cell = self.table_name.add_row().cells
+        cell[0].paragraphs[0].add_run(str(num)).font.size = Pt(10)
+        cell[0].paragraphs[0].add_run(' Параметры образцов и условия испытания:').font.size = Pt(10)
+        count_of_paragraphs = 1
+        for value in kwargs.values():
+            cell[0].add_paragraph().add_run(value).font.size = Pt(10)
+            count_of_paragraphs += 1
+        for i in range(0, count_of_paragraphs):
+            cell[0].paragraphs[i].paragraph_format.space_after = Pt(0)
+            cell[0].paragraphs[i].paragraph_format.space_before = Pt(0)
+        for i in range(1, func_calculate_cells(cell)+1):
+            set_cell_border(cell[i-1], end={"sz": 6, "val": 'single', "space": "0"})
+        set_cell_border(cell[0], start={"sz": 6, "val": 'double', "space": "0"})
+        set_cell_border(cell[func_calculate_cells(cell)-1], end={"sz": 6, "val": 'double', "space": "0"})
+
     
-    
-    def create_validity_criteria(self):
+    def create_validity_criteria(self, num, **kwargs):
         """Метод, который создает доп строку под критерии-годности"""
-        pass
-    
+        cell = self.table_name.add_row().cells
+        cell[0].paragraphs[0].add_run(str(num)).font.size = Pt(10)
+        cell[0].paragraphs[0].add_run(' Критерии годности:').font.size = Pt(10)
+        count_of_paragraphs = 1
+        for value in kwargs.values():
+            cell[0].add_paragraph().add_run(value[0]).font.size = Pt(10)
+            cell[3].add_paragraph().add_run(value[1]).font.size = Pt(10)
+            count_of_paragraphs += 1
+        for i in range(0, count_of_paragraphs):
+            cell[0].paragraphs[i].paragraph_format.space_after = Pt(0)
+            cell[0].paragraphs[i].paragraph_format.space_before = Pt(0)
+            cell[3].paragraphs[i].paragraph_format.space_after = Pt(0)
+            cell[3].paragraphs[i].paragraph_format.space_before = Pt(0)
+        for i in range(1, func_calculate_cells(cell)+1):
+            set_cell_border(cell[i-1], end={"sz": 6, "val": 'single', "space": "0"})
+            set_cell_border(cell[i-1], bottom={"sz": 6, "val": 'single', "space": "0"})
+        set_cell_border(cell[0], start={"sz": 6, "val": 'double', "space": "0"})
+        set_cell_border(cell[func_calculate_cells(cell)-1], end={"sz": 6, "val": 'double', "space": "0"})
