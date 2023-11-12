@@ -88,6 +88,7 @@ def get_specifications() -> str:
 
 
 def get_name_specifications() -> str:
+    """Получение названия ТУ"""
     for par in get_list_text_par():
         result = re.findall(r'\«Кабели\s*[а-яА-Я\s,0-9]+\.\s[Техническиеусловия\s]+\»', par) # название ТУ
         if 0 < len(result) < 2:
@@ -99,7 +100,8 @@ def get_list_par_from_tables() -> list:
     list_par = []
     for table in doc.tables:
         for i in range(2, len(table.rows)):
-            list_par.append(table.cell(i, 1).text)
+            par = ' '.join(table.cell(i, 1).text.split())
+            list_par.append(par)
     return list_par
             
             

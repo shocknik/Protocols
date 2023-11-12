@@ -21,7 +21,8 @@ from backend_read import get_cable_mark,\
     filling_table_heads_all,\
     get_list_requarements,\
     get_list_methods,\
-    table_inner_border_vertical
+    table_inner_border_vertical,\
+    func_def_test_by_program
 from create_table import *
 
 doc = Document()
@@ -259,14 +260,18 @@ filling_table_heads_all(test_table, list_head_test_table)
 
 
 
-object_row = Test_Table(test_table, list_records_test[1][0], '5.2.2.1', '8.2.2.1', '25.0', 'not more')
-object_row.row_for_navigation()
-object_row.title_row('1', 'Внешние факторы')
 list_4 = list(map(list, zip(get_list_par_from_tables(), get_list_requarements(), get_list_methods())))
 
-object_row.create_simple_row('1.1', False)
-object_row.create_sample_par_row('12', lenght= '- длина образца: 2,5 м;', temperature= '- температура выдержки в камере: 80 С;')
-object_row.create_validity_criteria('12.1', out_view=['- внешний вид', 'На поверхности оболочки не должно быть трещин.'])
+i = 0
+
+for par in list_4:
+    if par[0] in union_tests_dict.keys():
+        i += 1
+        object = Test_Table(test_table, union_tests_dict[par[0]], par[1], par[2], '-', 'not more')
+        object.create_simple_row(i)
+    else:
+        pass
+
 
 
 doc.save('title.docx')

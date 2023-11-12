@@ -8,6 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 python-docx = "^0.8.11"
+peewee = "^3.17.0"
+sqlalchemy = "^2.0.23"
 
 
 [build-system]

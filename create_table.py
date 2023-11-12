@@ -53,7 +53,7 @@ class Test_Table:
     def create_simple_row(self, num, tag=True):
         """Метод, который создает единичную строку под простые испытания"""      
         cell = self.table_name.add_row().cells
-        cell[0].text = str(num)
+        cell[0].text = str(num) + " "
         cell[0].text += str(self.test_record)
         cell[0].paragraphs[0].runs[0].font.size = Pt(10)
         for i, item in enumerate((self.requrement, self.method, self.mean_req, self.limit), start=1):
