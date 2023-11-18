@@ -201,6 +201,17 @@ files = [
 lxml = ">=2.3.2"
 
 [[package]]
+name = "python-json-logger"
+version = "2.0.7"
+description = "A python library adding a json log formatter"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "python-json-logger-2.0.7.tar.gz", hash = "sha256:23e7ec02d34237c5aa1e29a070193a4ea87583bb4e7f8fd06d3de8264c4b2e1c"},
+    {file = "python_json_logger-2.0.7-py3-none-any.whl", hash = "sha256:f380b826a991ebbe3de4d897aeec42760035ac760345e57b812938dc8b35e2bd"},
+]
+
+[[package]]
 name = "sqlalchemy"
 version = "2.0.23"
 description = "Database Abstraction Library"
@@ -301,4 +312,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a79935109fcd092bbcaf0e4cb330f8af09b0eea4115101dda2e4fb026bc84084"
+content-hash = "18bdf55a9d633fef7a14183d3c8c2b2f3ac872dd47c214074da3b38306ff2003"
