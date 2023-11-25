@@ -17,6 +17,12 @@ class TestCategory(BaseModel):
     ID = PrimaryKeyField(null=False)
     category = CharField(unique=True)
     
+    
+class SubCategory(BaseModel):
+    ID = PrimaryKeyField(null=False)
+    name = CharField(unique=True)
+    id_category = ForeignKeyField(TestCategory)
+    
         
 class PMITests(BaseModel):
     ID = PrimaryKeyField(null=False)
@@ -38,7 +44,7 @@ class RelationshipCategoryCriteria(BaseModel):
 def create_tables():
     try:
         with db:
-            db.create_tables([TestCategory, PMITests, TestCriteria, RelationshipCategoryCriteria])
+            db.create_tables([TestCategory, SubCategory, PMITests, TestCriteria, RelationshipCategoryCriteria])
     except Exception as e:
         logger.error(f'Ошибка в создании таблицы: {e}', exc_info=True)
-create_tables()
+#create_tables()
