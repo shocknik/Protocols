@@ -32,15 +32,6 @@ def insert_subcategory(subcategory: dict[str, list]):
                 print(f'Подкатегория "{sub}" уже существует в категории "{cat.category}"')
                 continue
 
-
-# def insert_pmi(dict_test: dict[str, str]):
-#     for k, v in dict_test:
-#         try:
-#             test = PMITest(name = k, form = v)
-#             test.save()
-#         except peewee.IntegrityError as e:
-#             print(f'Запись {k}: {v} уже существует')
-#             continue
     
 def insert_pmitests(tests_from_pmi: dict[str, dict[str, dict[str, str]]]):
     """Функция, которая заполняет несколько таблиц из словаря с 
