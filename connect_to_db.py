@@ -28,7 +28,8 @@ class PMITests(BaseModel):
     ID = PrimaryKeyField(null=False)
     name = CharField(unique=True)
     form = CharField(unique=True)
-    id_category=ForeignKeyField(TestCategory)
+    id_category = ForeignKeyField(TestCategory)
+    id_subcategory = ForeignKeyField(SubCategory)
     
     
 class TestCriteria(BaseModel):

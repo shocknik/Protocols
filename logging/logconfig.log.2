@@ -1,0 +1,5 @@
+('INSERT INTO "pmitests" ("name", "form", "id_category_id", "id_subcategory_id") VALUES (?, ?, ?, ?)', ['Контроль электрического сопротивления токопроводящих жил', 'Электрическое сопротивление токопроводящих жил, пересчитанное на 1 км длины и температуру 20 С, Ом', 2, 5])
+('INSERT INTO "pmitests" ("name", "form", "id_category_id", "id_subcategory_id") VALUES (?, ?, ?, ?)', ['Контроль омической асимметрии изолированных токопроводящих жил в паре', '', 2, 5])
+('INSERT INTO "pmitests" ("name", "form", "id_category_id", "id_subcategory_id") VALUES (?, ?, ?, ?)', ['Контроль электрической емкости пары', 'Электрическая емкость пары, пересчитанная на длину 1000 м, нФ', 2, 5])
+('INSERT INTO "pmitests" ("name", "form", "id_category_id", "id_subcategory_id") VALUES (?, ?, ?, ?)', ['Контроль емкостной асимметрии пар по отношению к экрану', '', 2, 5])
+('SELECT "t1"."ID", "t1"."name", "t1"."id_category_id" FROM "subcategory" AS "t1" WHERE ("t1"."name" = ?) LIMIT ? OFFSET ?', ['ВЧ-параметры', 1, 0])

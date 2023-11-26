@@ -2,7 +2,7 @@
 import logging_config
 import peewee
 import logging
-from connect_to_db import TestCategory, SubCategory, db
+from connect_to_db import TestCategory, SubCategory, PMITests, db
 from setting import *
 
 logger = logging.getLogger(__name__)
@@ -33,33 +33,35 @@ def insert_subcategory(subcategory: dict[str, list]):
                 continue
 
 
-def insert_pmi(dict_test: dict[str, str]):
-    for k, v in dict_test:
-        try:
-            test = PMITest(name = k, form = v)
-            test.save()
-        except peewee.IntegrityError as e:
-            print(f'Запись {k}: {v} уже существует')
-            continue
+# def insert_pmi(dict_test: dict[str, str]):
+#     for k, v in dict_test:
+#         try:
+#             test = PMITest(name = k, form = v)
+#             test.save()
+#         except peewee.IntegrityError as e:
+#             print(f'Запись {k}: {v} уже существует')
+#             continue
     
 def insert_pmitests(tests_from_pmi: dict[str, dict[str, dict[str, str]]]):
     """Функция, которая заполняет несколько таблиц из словаря с 
     ПМИ испытаниями и формами из протокола,
     учитывая категории и подкатегории"""
-    i = 1
-    dict_cat = {}
-    dict_sub = {}
-    dict_test = {}
     for category, subcategory in tests_from_pmi.items():
-        subs = []
-        dict_cat[i] = category
-        i += 1
+        cat = TestCategory.get_or_none(TestCategory.category == category)
+        if cat is None:
+            cat = TestCategory(category=category)
+            cat.save()
         for key, value in subcategory.items():
-            subs.append(key)
+            sub = SubCategory.get_or_none(SubCategory.name == key)
+            if sub is None:
+                sub = SubCategory(name = key, id_category = cat)
+                sub.save()
             for k, v in value.items():
-                dict_test[k] = v
-        dict_sub[category] = subs
-    # insert_category(dict_cat)
-    # insert_subcategory(dict_sub)
-    return dict_cat, dict_sub, dict_test
-print(insert_pmitests(PMITest))   
+                try:
+                    pmitest = PMITests(name=k, form=v, id_category=cat, id_subcategory=sub)
+                    pmitest.save()
+                except peewee.IntegrityError as e:
+                    print(f'Запись {k}: {v} уже существует')
+                continue    
+                   
+insert_pmitests(PMITest)
