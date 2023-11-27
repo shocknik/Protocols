@@ -4,6 +4,19 @@ from docx import Document
 from docx.shared import Inches, Cm, Mm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
 from docx.enum.section import WD_SECTION_START, WD_ORIENTATION
+from backend_read import get_cable_mark,\
+    get_specifications,\
+    get_name_specifications,\
+    get_list_text_par,\
+    create_marker_list,\
+    change_font, border_form,\
+    func_union_cells,\
+    get_list_par_from_tables,\
+    filling_table_heads_all,\
+    get_list_requarements,\
+    get_list_methods,\
+    table_inner_border_vertical,\
+    func_def_test_by_program
 class Protocol:
     
     
@@ -12,11 +25,13 @@ class Protocol:
         self.test_center = test_center
         
     def create_new_file(self):
+        """Метод создания нового файла"""
         doc = Document()
         doc.save(self.path)
         
         
     def create_title_list(self):
+        """Метод создания титульного листа"""
         doc = Document(self.path)
         if self.test_center == 'KT':
             i = 0
@@ -39,39 +54,61 @@ class Protocol:
         title_table = doc.add_table(rows=7, cols=3)
         cell_header = title_table.cell(0, 1)
         """Название Испытательного центра"""
-        cell_header.paragraphs[0].add_run(title_test_center[i]).font.size = Pt(14)
-        cell_header.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        chp = cell_header.paragraphs[0]
+        chp.add_run(title_test_center[i]).font.size = Pt(14)
+        chp.runs[0].bold = True
+        chp.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         cell_header.width = Cm(23)
-        cell_header.paragraphs[0].paragraph_format.space_after = Pt(0)
+        chp.paragraph_format.space_after = Pt(0)
+        set_cell_border(cell_header, bottom={"sz": 12, "val": "single", "color": "black", "space": "0"})
         if i == 0:
             cell_header_2 = title_table.cell(1, 1)
-            cell_header_2.paragraphs[0].add_run('ИСПЫТАТЕЛЬНЫЙ ЦЕНТР').bold = True
-            cell_header_2.paragraphs[0].paragraph_format.space_before = Pt(0)
-            cell_header_2.paragraphs[0].paragraph_format.space_after = Cm(1)
-            cell_header_2.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            set_cell_border(cell_header_2, top={"sz": 12, "val": "single", "color": "black", "space": "0"})
+            chp2 = cell_header_2.paragraphs[0]
+            chp2.add_run('ИСПЫТАТЕЛЬНЫЙ ЦЕНТР').bold = True
+            chp2.paragraph_format.space_before = Pt(0)
+            chp2.paragraph_format.space_after = Cm(1)
+            chp2.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         elif i == 1:
             cell_header_2 = title_table.cell(1, 0)
-            
+            cell_header_2.paragraphs[0].add_run().add_picture('logoSK.png', width=Inches(1.25))
         """Утверждающая надпись"""
         title_table.cell(1, 2).merge(title_table.cell(2, 2))
         cell_seo = title_table.cell(1, 2)
-        cell_seo.paragraphs[0].add_run("УТВЕРЖДАЮ\n").bold = True
-        cell_seo.paragraphs[0].add_run(ratification[i])
-        cell_seo.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        cs = cell_seo.paragraphs[0]
+        cs.add_run("УТВЕРЖДАЮ\n").bold = True
+        cs.add_run(ratification[i])
+        cs.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         """Адрес осуществления деятельности"""
         title_table.cell(2, 0).merge(title_table.cell(2, 1))
         cell_adress = title_table.cell(2, 0)
-        cell_adress.paragraphs[0].add_run(adress[i])
-        cell_adress.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-        cell_adress.paragraphs[0].paragraph_format.line_spacing = Pt(12)
+        ca = cell_adress.paragraphs[0]
+        ca.add_run(adress[i])
+        ca.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+        ca.paragraph_format.line_spacing = Pt(12)
         cell_adress.width = Cm(15)
-        
+        """Номер протокола"""
+        cell_prot = title_table.cell(3, 1)
+        cpp = cell_prot.paragraphs[0]
+        cpp.add_run("ПРОТОКОЛ №            \n").bold = True
+        cpp.add_run("от              \nприемочных испытаний")
+        cpp.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        cpp.paragraph_format.space_after = Pt(0)
+        """Описание протокола испытаний"""
+        cell_discription = title_table.cell(4, 1)
+        cell_discription.width = Cm(30)
+        cd = cell_discription.paragraphs[0]
+        cd.add_run("кабеля                                      марки ")
+        cd.add_run("{},\n".format(get_cable_mark()[0])).bold = True
+        cd.add_run("изготовленного ООО НПП «СПЕЦКАБЕЛЬ» на соответствие требованиям {} {}".\
+            format(get_specifications(), get_name_specifications()))
+        cd.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY_HI
+        cd.paragraph_format.line_spacing = Pt(12)
+        cd.paragraph_format.space_after = Pt(6)
         doc.save(self.path)
         
         
         
         
-obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_1.docx', test_center=test_center[0])
+obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_1.docx', test_center=test_center[1])
 obj.create_new_file()
 obj.create_title_list()
