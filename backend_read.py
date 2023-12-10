@@ -253,6 +253,7 @@ def func_calculate_cells(row) -> int:
         cell_loc = (tc.top, tc.bottom, tc.left, tc.right)
         counted_cells.add(cell_loc)
     return(len(counted_cells))
+
         
 
     

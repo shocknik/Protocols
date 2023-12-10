@@ -1,9 +1,13 @@
+import os
 from setting import test_center, ratification, title_test_center, adress
 from borders import set_cell_border
+from numpage import add_page_number
 from docx import Document
+from docx.oxml import OxmlElement, ns
 from docx.shared import Inches, Cm, Mm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
 from docx.enum.section import WD_SECTION_START, WD_ORIENTATION
+from datetime import datetime
 from backend_read import get_cable_mark,\
     get_specifications,\
     get_name_specifications,\
@@ -19,7 +23,6 @@ from backend_read import get_cable_mark,\
     func_def_test_by_program
 class Protocol:
     
-    
     def __init__(self, path, test_center) -> None:
         self.path = path
         self.test_center = test_center
@@ -28,7 +31,6 @@ class Protocol:
         """Метод создания нового файла"""
         doc = Document()
         doc.save(self.path)
-        
         
     def create_title_list(self):
         """Метод создания титульного листа"""
@@ -76,7 +78,8 @@ class Protocol:
         cell_seo = title_table.cell(1, 2)
         cs = cell_seo.paragraphs[0]
         cs.add_run("УТВЕРЖДАЮ\n").bold = True
-        cs.add_run(ratification[i])
+        cs.add_run(f'{ratification[i]}\n')
+        cs.add_run(f'«___» _____________ {datetime.now().year}')
         cs.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         """Адрес осуществления деятельности"""
         title_table.cell(2, 0).merge(title_table.cell(2, 1))
@@ -104,11 +107,46 @@ class Protocol:
         cd.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY_HI
         cd.paragraph_format.line_spacing = Pt(12)
         cd.paragraph_format.space_after = Pt(6)
+        """Доп информация о протоколе"""
+        title_table.cell(5, 0).merge(title_table.cell(5, 1))
+        title_table.cell(5, 1).merge(title_table.cell(5, 2))
+        cell_remarks = title_table.cell(5, 0)
+        crp = cell_remarks.paragraphs[0]
+        crp.add_run(f'1 Листов всего: ')
+        add_page_number(crp)
+        crp.add_run(f'\n2 Результаты испытаний распространяются только на предоставленный (е) заказчиком образец (цы).\n\
+3 Протокол испытаний не может быть частично или полностью воспроизведен без письменного разрешения Испытательного центра."')
+        crp.paragraph_format.space_before = Cm(2)
+        """Надпись Москва 2023"""
+        cell_moscow = title_table.cell(6, 1)
+        cym = cell_moscow.paragraphs[0]
+        cym.add_run(f"Москва\n{datetime.now().year}")
+        cym.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        cym.paragraph_format.space_before = Cm(2)
         doc.save(self.path)
+    
+    def create_two_list(self):
+        doc = Document(self.path)
+        doc.add_section(start_type=WD_SECTION_START.NEW_PAGE)
+        doc.add_page_break()
+        footer_1 = doc.sections[0].footer.paragraphs[0]
+        footer_1.style.font.size = Pt(10)
+        footer_1.add_run('Нижний колонтитул для первой секции')
+        footer_2 = doc.sections[1].footer.paragraphs[0]
+        footer_2.style.font.size = Pt(10)
+        footer_2.add_run('Нижний колонтитул для второй секции')
+        doc.save(self.path)
+    
         
         
-        
+   
         
 obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_1.docx', test_center=test_center[1])
 obj.create_new_file()
 obj.create_title_list()
+obj.create_two_list()
+
+os.startfile("D:\\My_projects\\Protoсols\\tests_1.docx")
+
+
+
