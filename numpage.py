@@ -12,7 +12,7 @@ def create_attribute(element, name, value):
     element.set(ns.qn(name), value)
 
 
-def add_page_number(paragraph):
+def add_page_number(paragraph, field):
     page_num_run = paragraph.add_run()
     # обозначаем начало позиции вывода
     fldChar1 = create_element('w:fldChar')
@@ -20,7 +20,7 @@ def add_page_number(paragraph):
     # задаем вывод текущего значения страницы PAGE (всего страниц NUMPAGES)
     instrText = create_element('w:instrText')
     create_attribute(instrText, 'xml:separate', 'preserve')
-    instrText.text = "NUMPAGES"
+    instrText.text = field
     # обозначаем конец позиции вывода
     fldChar2 = create_element('w:fldChar')
     create_attribute(fldChar2, 'w:fldCharType', 'end')

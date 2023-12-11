@@ -6,7 +6,7 @@ from docx import Document
 from docx.oxml import OxmlElement, ns
 from docx.shared import Inches, Cm, Mm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
-from docx.enum.section import WD_SECTION_START, WD_ORIENTATION
+from docx.enum.section import WD_SECTION_START, WD_ORIENTATION, WD_HEADER_FOOTER_INDEX
 from datetime import datetime
 from backend_read import get_cable_mark,\
     get_specifications,\
@@ -30,15 +30,6 @@ class Protocol:
     def create_new_file(self):
         """Метод создания нового файла"""
         doc = Document()
-        doc.save(self.path)
-        
-    def create_title_list(self):
-        """Метод создания титульного листа"""
-        doc = Document(self.path)
-        if self.test_center == 'KT':
-            i = 0
-        elif self.test_center =='SK':
-            i = 1
         """Задание альбомной формы, шрифта и отступов"""
         style = doc.styles['Normal']
         style.font.name = 'Times New Roman'
@@ -52,6 +43,15 @@ class Protocol:
         title.right_margin = Mm(13)
         title.top_margin = Mm(15)
         title.bottom_margin = Mm(13)
+        doc.save(self.path)
+        
+    def create_title_list(self):
+        """Метод создания титульного листа"""
+        doc = Document(self.path)
+        if self.test_center == 'KT':
+            i = 0
+        elif self.test_center =='SK':
+            i = 1
         """Создание таблицы для рамки листа"""
         title_table = doc.add_table(rows=7, cols=3)
         cell_header = title_table.cell(0, 1)
@@ -113,7 +113,7 @@ class Protocol:
         cell_remarks = title_table.cell(5, 0)
         crp = cell_remarks.paragraphs[0]
         crp.add_run(f'1 Листов всего: ')
-        add_page_number(crp)
+        add_page_number(crp, 'NUMPAGES')
         crp.add_run(f'\n2 Результаты испытаний распространяются только на предоставленный (е) заказчиком образец (цы).\n\
 3 Протокол испытаний не может быть частично или полностью воспроизведен без письменного разрешения Испытательного центра."')
         crp.paragraph_format.space_before = Cm(2)
@@ -122,19 +122,23 @@ class Protocol:
         cym = cell_moscow.paragraphs[0]
         cym.add_run(f"Москва\n{datetime.now().year}")
         cym.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        cym.paragraph_format.space_before = Cm(2)
+        cym.paragraph_format.space_before = Cm(1)
+        doc.sections[0].different_first_page_header_footer = True       
+        doc.add_section(WD_SECTION_START.NEW_PAGE)
         doc.save(self.path)
     
     def create_two_list(self):
         doc = Document(self.path)
-        doc.add_section(start_type=WD_SECTION_START.NEW_PAGE)
-        doc.add_page_break()
-        footer_1 = doc.sections[0].footer.paragraphs[0]
-        footer_1.style.font.size = Pt(10)
-        footer_1.add_run('Нижний колонтитул для первой секции')
-        footer_2 = doc.sections[1].footer.paragraphs[0]
-        footer_2.style.font.size = Pt(10)
-        footer_2.add_run('Нижний колонтитул для второй секции')
+        doc.sections[1].different_first_page_header_footer = False
+        header_2 = doc.sections[1].header
+        header_2.paragraphs[0].text = 'Протокол №'
+        header_2.add_paragraph().add_run('Лист ')
+        add_page_number(header_2.paragraphs[1], 'PAGE')
+        header_2.add_paragraph().add_run('Всего листов ')
+        add_page_number(header_2.paragraphs[2], 'NUMPAGES')
+        header_2.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        header_2.paragraphs[1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        header_2.paragraphs[2].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         doc.save(self.path)
     
         
