@@ -33,6 +33,7 @@ print(root)
     3.4 view.py (отображает информацию через терминал)
     3.5 controller.py (осуществляет взаимодействие между model.py и veiw.py)
 """
+import json
 import re
 import os
 import docx
@@ -254,6 +255,28 @@ def func_calculate_cells(row) -> int:
         counted_cells.add(cell_loc)
     return(len(counted_cells))
 
+def read_json_file(path) -> dict:
+    """Читает json-файл и возвращает словарь"""
+    with open(path, encoding='utf-8') as f:
+        template = json.load(f)
+        
+    return template
         
 
-    
+svfile = read_json_file("D:\My_projects\LabReports\meta.json")    
+
+
+# for chapter_num, chapter_text in svfile.items():
+#     if chapter_num != "8":
+#         for chapter_name, chapter_value in chapter_text.items():
+#             print(chapter_num, chapter_name)
+#             print(chapter_value)
+#     else: 
+#         break
+
+# # for method, method_name in svfile["7"]['Методы испытаний'].items():
+# #     print(method, str('"' + method_name + '";'))  
+
+
+
+

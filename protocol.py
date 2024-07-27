@@ -38,7 +38,7 @@ class Protocol:
         title.orientation = WD_ORIENTATION.LANDSCAPE
         title.page_height = Cm(21.0)
         title.page_width = Cm(29.7)
-        """формилование отступов полей"""
+        """формирование отступов полей"""
         title.left_margin = Mm(15)
         title.right_margin = Mm(13)
         title.top_margin = Mm(15)
@@ -145,12 +145,12 @@ class Protocol:
         
    
         
-obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_1.docx', test_center=test_center[1])
+obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_24.docx', test_center=test_center[1])
 obj.create_new_file()
 obj.create_title_list()
 obj.create_two_list()
 
-os.startfile("D:\\My_projects\\Protoсols\\tests_1.docx")
+os.startfile("D:\\My_projects\\Protoсols\\tests_24.docx")
 
 
 
