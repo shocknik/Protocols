@@ -20,12 +20,15 @@ from backend_read import get_cable_mark,\
     get_list_requarements,\
     get_list_methods,\
     table_inner_border_vertical,\
-    func_def_test_by_program
+    func_def_test_by_program, \
+    read_json_file
 class Protocol:
     
-    def __init__(self, path, test_center) -> None:
+    def __init__(self, path, path_json, test_center) -> None:
         self.path = path
         self.test_center = test_center
+        self.path_json = path_json
+        
         
     def create_new_file(self):
         """Метод создания нового файла"""
@@ -129,23 +132,37 @@ class Protocol:
     
     def create_two_list(self):
         doc = Document(self.path)
+        """Формирование колонтитулов"""
         doc.sections[1].different_first_page_header_footer = False
         header_2 = doc.sections[1].header
         header_2.paragraphs[0].text = 'Протокол №'
         header_2.add_paragraph().add_run('Лист ')
         add_page_number(header_2.paragraphs[1], 'PAGE')
+        header_2.paragraphs[1].paragraph_format.space_after = Pt(0)
         header_2.add_paragraph().add_run('Всего листов ')
         add_page_number(header_2.paragraphs[2], 'NUMPAGES')
         header_2.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         header_2.paragraphs[1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         header_2.paragraphs[2].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        """Заполнение по данным из json"""
+        svfile = read_json_file(self.path_json)
+        for chapter_num, chapter_content in svfile.items():
+            if int(chapter_num) < 3:
+                doc.add_paragraph().add_run(chapter_num).bold = True
+                doc.paragraphs[int(chapter_num)].add_run(" ")
+                doc.paragraphs[int(chapter_num)].add_run(chapter_content.keys()).bold = True
+                doc.add_paragraph().add_run(chapter_content.values())
+            else:
+                pass
+        
         doc.save(self.path)
-    
+
         
-        
-   
-        
-obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_24.docx', test_center=test_center[1])
+
+       
+obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_24.docx',\
+                path_json="D:\My_projects\LabReports\meta.json",\
+                test_center=test_center[1])
 obj.create_new_file()
 obj.create_title_list()
 obj.create_two_list()

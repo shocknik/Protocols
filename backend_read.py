@@ -255,6 +255,9 @@ def func_calculate_cells(row) -> int:
         counted_cells.add(cell_loc)
     return(len(counted_cells))
 
+
+"""Работа с json"""
+
 def read_json_file(path) -> dict:
     """Читает json-файл и возвращает словарь"""
     with open(path, encoding='utf-8') as f:
@@ -263,7 +266,10 @@ def read_json_file(path) -> dict:
     return template
         
 
-svfile = read_json_file("D:\My_projects\LabReports\meta.json")    
+def print_json_data():
+    """Функция возвращает данные для заполнения введения протокола из json (1-7 разделы)"""
+    svfile = read_json_file("D:\My_projects\LabReports\meta.json")    
+
 
 
 # for chapter_num, chapter_text in svfile.items():
