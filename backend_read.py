@@ -271,14 +271,25 @@ def print_json_data():
     svfile = read_json_file("D:\My_projects\LabReports\meta.json")    
 
 
+def unpack_json():
+    """
+    Функция распаковки json
+    Структура словарей в файле
+    dict_1:
+        key: chapter_num - номер раздела
+        value: chapter_content - содержимое раздела
+        dict_2:
+            key: content_name - наименование раздела
+            value: content_discription - описание раздела
+    """
+    f_json = open("D:\My_projects\LabReports\meta.json")
+    #diser_json = json.load(f_json)
+    print(f_json)
+    
+unpack_json()
 
-# for chapter_num, chapter_text in svfile.items():
-#     if chapter_num != "8":
-#         for chapter_name, chapter_value in chapter_text.items():
-#             print(chapter_num, chapter_name)
-#             print(chapter_value)
-#     else: 
-#         break
+
+
 
 # # for method, method_name in svfile["7"]['Методы испытаний'].items():
 # #     print(method, str('"' + method_name + '";'))  

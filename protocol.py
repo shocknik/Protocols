@@ -147,7 +147,7 @@ class Protocol:
         """Заполнение по данным из json"""
         svfile = read_json_file(self.path_json)
         for chapter_num, chapter_content in svfile.items():
-            if int(chapter_num) < 3:
+            if int(chapter_num) < 2:
                 doc.add_paragraph().add_run(chapter_num).bold = True
                 doc.paragraphs[int(chapter_num)].add_run(" ")
                 doc.paragraphs[int(chapter_num)].add_run(chapter_content.keys()).bold = True
