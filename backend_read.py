@@ -258,7 +258,7 @@ def func_calculate_cells(row) -> int:
 
 """Работа с json"""
 
-def read_json_file(path) -> dict:
+def read_json_file(path: str) -> dict:
     """Читает json-файл и возвращает словарь"""
     with open(path, encoding='utf-8') as f:
         template = json.load(f)
@@ -281,18 +281,30 @@ def unpack_json():
         dict_2:
             key: content_name - наименование раздела
             value: content_discription - описание раздела
+            dict_3:
+                    key: discr_name
+                    value: discr_content
+                OR
+            str:
+                discr_content
     """
-    f_json = open("D:\My_projects\LabReports\meta.json")
-    #diser_json = json.load(f_json)
-    print(f_json)
-    
-unpack_json()
+    data = read_json_file("D:\My_projects\LabReports\meta.json")
+    for key, value in data.items():
+        is_dict = True
+        while is_dict is True and int(key) < 8:
+            if isinstance(value, dict):
+                for key_1, value_1 in value.items():
+                    print(key, key_1) # bold
+                    if isinstance(value_1, dict):
+                        for key_2, value_2 in value_1.items():
+                            print(key_2, value_2)
+                        is_dict = False
+                    else:
+                        print(value_1)
+                        is_dict = False
+            else:
+                is_dict = False
 
-
-
-
-# # for method, method_name in svfile["7"]['Методы испытаний'].items():
-# #     print(method, str('"' + method_name + '";'))  
 
 
 

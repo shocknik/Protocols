@@ -145,16 +145,29 @@ class Protocol:
         header_2.paragraphs[1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         header_2.paragraphs[2].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         """Заполнение по данным из json"""
-        svfile = read_json_file(self.path_json)
-        for chapter_num, chapter_content in svfile.items():
-            if int(chapter_num) < 2:
-                doc.add_paragraph().add_run(chapter_num).bold = True
-                doc.paragraphs[int(chapter_num)].add_run(" ")
-                doc.paragraphs[int(chapter_num)].add_run(chapter_content.keys()).bold = True
-                doc.add_paragraph().add_run(chapter_content.values())
-            else:
-                pass
-        
+        data = read_json_file(self.path_json)
+        for key, value in data.items():
+            is_dict = True
+            while is_dict is True and int(key) < 8:
+                if isinstance(value, dict):
+                    for key_1, value_1 in value.items():
+                        doc.add_paragraph().add_run(key).bold = True
+                        doc.paragraphs[int(key)].add_run(" ")
+                        doc.paragraphs[int(key)].add_run(key_1).bold = True
+                        doc.paragraphs[int(key)].add_run("\n")
+                        if isinstance(value_1, dict):
+                            for key_2, value_2 in value_1.items():
+                                doc.paragraphs[int(key)].add_run(key_2)
+                                doc.paragraphs[int(key)].add_run(" ")
+                                doc.paragraphs[int(key)].add_run(value_2)
+                                doc.paragraphs[int(key)].add_run("\n")
+                            is_dict = False
+                        else:
+                            doc.paragraphs[int(key)].add_run(value_1)
+                            doc.paragraphs[int(key)].add_run("\n")
+                            is_dict = False
+                else:
+                    is_dict = False
         doc.save(self.path)
 
         
