@@ -287,6 +287,13 @@ def unpack_json():
                 OR
             str:
                 discr_content
+                key (номер раздела)
+                key_1 (наименование раздела)
+                key_2 (название параметра в разделе - дата/адрес/гост)
+                
+                value_1 словарь в разделе (информация раздела хранится здесь)
+                value_2 значения в разделе (содержание раздела)
+
     """
     data = read_json_file("D:\My_projects\LabReports\meta.json")
     for key, value in data.items():
@@ -304,8 +311,5 @@ def unpack_json():
                         is_dict = False
             else:
                 is_dict = False
-
-
-
 
 

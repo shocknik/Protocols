@@ -1,5 +1,6 @@
 import os
-from setting import test_center, ratification, title_test_center, adress
+from setting import test_center, ratification, title_test_center, adress, cells_union, \
+                    list_head_test_table
 from borders import set_cell_border
 from numpage import add_page_number
 from docx import Document
@@ -21,7 +22,9 @@ from backend_read import get_cable_mark,\
     get_list_methods,\
     table_inner_border_vertical,\
     func_def_test_by_program, \
-    read_json_file
+    read_json_file, \
+    border_form
+    
 class Protocol:
     
     def __init__(self, path, path_json, test_center) -> None:
@@ -147,7 +150,7 @@ class Protocol:
         """Заполнение по данным из json"""
         data = read_json_file(self.path_json)
         for key, value in data.items():
-            is_dict = True
+            is_dict = True # для проверки, является ли элемент словарем, если да, то цикл распаковки продолжается, если нет, выводится содержимое строки
             while is_dict is True and int(key) < 8:
                 if isinstance(value, dict):
                     for key_1, value_1 in value.items():
@@ -159,7 +162,9 @@ class Protocol:
                             for key_2, value_2 in value_1.items():
                                 doc.paragraphs[int(key)].add_run(key_2)
                                 doc.paragraphs[int(key)].add_run(" ")
+                                if int(key) == 7: doc.paragraphs[int(key)].add_run("«")
                                 doc.paragraphs[int(key)].add_run(value_2)
+                                if int(key) == 7: doc.paragraphs[int(key)].add_run("»;")
                                 doc.paragraphs[int(key)].add_run("\n")
                             is_dict = False
                         else:
@@ -170,7 +175,29 @@ class Protocol:
                     is_dict = False
         doc.save(self.path)
 
+    def create_results_table(self):
+        doc = Document(self.path)
+        data = read_json_file(self.path_json)
+        for key, value in data.items():
+            if int(key) == 8:
+                doc.add_paragraph().add_run(str(key + " " + list(value.keys())[0])).bold = True
+            else:
+                pass
+        test_table = doc.add_table(rows=2, cols=7)
+        test_table.cell(0, 0).width = Cm(6)
+        table_inner_border_vertical(2, 7, test_table, sz=6, vert=False)
+        border_form(2, 7, test_table, border="double", sz=6)
+        func_union_cells(test_table, **cells_union)
+        filling_table_heads_all(test_table, list_head_test_table)
+        test_table.add_row().cells
+        doc.save(self.path)
         
+        
+        
+
+
+
+
 
        
 obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_24.docx',\
@@ -179,6 +206,7 @@ obj = Protocol(path = 'D:\\My_projects\\Protoсols\\tests_24.docx',\
 obj.create_new_file()
 obj.create_title_list()
 obj.create_two_list()
+obj.create_results_table()
 
 os.startfile("D:\\My_projects\\Protoсols\\tests_24.docx")
 
