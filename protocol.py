@@ -1,4 +1,5 @@
 import os
+from create_table import Test_Table
 from setting import test_center, ratification, title_test_center, adress, cells_union, \
                     list_head_test_table
 from borders import set_cell_border
@@ -183,13 +184,14 @@ class Protocol:
                 doc.add_paragraph().add_run(str(key + " " + list(value.keys())[0])).bold = True
             else:
                 pass
+        data.get("8")
         test_table = doc.add_table(rows=2, cols=7)
         test_table.cell(0, 0).width = Cm(6)
         table_inner_border_vertical(2, 7, test_table, sz=6, vert=False)
         border_form(2, 7, test_table, border="double", sz=6)
         func_union_cells(test_table, **cells_union)
-        filling_table_heads_all(test_table, list_head_test_table)
-        test_table.add_row().cells
+        filling_table_heads_all(test_table, list_head_test_table)\
+        
         doc.save(self.path)
         
         

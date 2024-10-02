@@ -23,6 +23,10 @@ class Test_Table:
         
         
     def row_for_navigation(self):
+        """
+        Метод, создающий строку номирации столбцов, которая переносится
+        на каждый новый лист
+        """
         cell = self.table_name.add_row().cells
         for i in range(1, func_calculate_cells(cell)+1):
             cell[i-1].text = str(i)
