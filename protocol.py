@@ -179,26 +179,30 @@ class Protocol:
     def create_results_table(self):
         doc = Document(self.path)
         data = read_json_file(self.path_json)
+        results = data.get("8") # словарь с результатами
         for key, value in data.items():
             if int(key) == 8:
                 doc.add_paragraph().add_run(str(key + " " + list(value.keys())[0])).bold = True
             else:
                 pass
-        data.get("8")
+
         test_table = doc.add_table(rows=2, cols=7)
         test_table.cell(0, 0).width = Cm(6)
+        row_for_test = Test_Table(test_table,
+                                  'test_tecord',
+                                'requrement',
+                                'method',
+                                'mean_req',
+                                'limit')
         table_inner_border_vertical(2, 7, test_table, sz=6, vert=False)
         border_form(2, 7, test_table, border="double", sz=6)
         func_union_cells(test_table, **cells_union)
-        filling_table_heads_all(test_table, list_head_test_table)\
-        
+        filling_table_heads_all(test_table, list_head_test_table)
+        row_for_test.row_for_navigation()
         doc.save(self.path)
         
         
         
-
-
-
 
 
        
@@ -210,7 +214,7 @@ obj.create_title_list()
 obj.create_two_list()
 obj.create_results_table()
 
-os.startfile("D:\\My_projects\\Protoсols\\tests_24.docx")
+#os.startfile("D:\\My_projects\\Protoсols\\tests_24.docx")
 
 
 

@@ -37,6 +37,7 @@ import json
 import re
 import os
 import docx
+import pandas as pd
 from docx import Document
 from docx.shared import Inches, Cm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
@@ -311,5 +312,18 @@ def unpack_json():
                         is_dict = False
             else:
                 is_dict = False
+                
+data = read_json_file("D:\My_projects\LabReports\meta.json")              
+results = data.get("8")
+
+      
+def read_unpack_tests_results(results):
+    df = pd.DataFrame(results)
+    return df
+    
 
 
+
+
+
+print(read_unpack_tests_results(results))
