@@ -38,6 +38,7 @@ import re
 import os
 import docx
 import pandas as pd
+import openpyxl
 from docx import Document
 from docx.shared import Inches, Cm, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
@@ -313,17 +314,60 @@ def unpack_json():
             else:
                 is_dict = False
                 
-data = read_json_file("D:\My_projects\LabReports\meta.json")              
-results = data.get("8")
+                
+def get_df_from_json(path):
+    """
+    Функция, которая получает dataframe из файла json
+    """
+    data = read_json_file(path)              
+    results = data.get("8")
+    df_melt = pd.json_normalize(results, sep='>>').melt()
+    df_final = df_melt['variable'].str.split('>>', expand=True)
+    df_final.columns = [f'col{name}' for name in df_final.columns]
+    df_final['value'] = df_melt['value']
+    del df_final['col0']
+    df_final = df_final.rename(columns={
+        "col1": "part", # раздел таблицы с результатами (блок параметров)
+        "col2": "parameter", # сам параметр
+        "col3": "conditions",  # условия в каких был получен параметр (исполнитель, условия окруж среды, дата...)
+        "col4": "object", # объект, к которому относится результат
+    })
+    # df_final.to_excel('dataframe.xlsx', index=False) # daraframe сохраняется в файле exel
+    
+    return df_final
 
-      
-def read_unpack_tests_results(results):
-    df = pd.DataFrame(results)
-    return df
+# print(get_df_from_json(path='D:\My_projects\LabReports\meta.json'))
+
+def list_for_part_row(dataframe) -> list:
+    list_of_parts = dataframe['part'].unique()
+    return list_of_parts
+
+def data_for_table_construction(df):
+    """Функция, которая формирует набор данных для строки в таблице испытаний
+    В виде: ->list?
+    Нужно получить:
+    Параметр(рассматреваемый элемент)
+    Требование
+    Допуск
+    Результат
+    Пункт требование ТУ
+    Метод
+    На вход принимает датафрейм
+    """
+    construction = df[df["part"] == "1 Конструкция"]
+    print(type(construction))
+    
+    
+    return construction
+    
+print(data_for_table_construction(get_df_from_json(path='D:\My_projects\LabReports\meta.json')))
     
 
 
-
-
-
-print(read_unpack_tests_results(results))
+# print('Первый массив ключей:', df_final['part'].unique(),
+#       'Второй массив ключей:',df_final['parameter'].unique(),
+#       'Третий массив ключей:',df_final['conditions'].unique(),
+#       'Четвертый массив ключей:',df_final['object'].unique(),
+#       'Таблица значений:',df_final['value'] ,sep='\n')   
+      
+    

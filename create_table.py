@@ -8,7 +8,11 @@ from docx.oxml import OxmlElement
 from docx.oxml.text import font
 from docx.oxml.ns import qn
 from borders import set_cell_border
-from backend_read import border_form, border_around_cell, table_inner_border_vertical, func_calculate_cells
+from backend_read import border_form,\
+    border_around_cell,\
+        table_inner_border_vertical,\
+            func_calculate_cells,\
+                list_for_part_row
 
 class Test_Table:
     """Класс таблицы"""
@@ -52,6 +56,19 @@ class Test_Table:
         cell[0].paragraphs[0].paragraph_format.space_after = Pt(0) # убрать отступ внизу
         cell[0].paragraphs[0].runs[0].font.size = Pt(12) # установить размер шрифта
         border_around_cell(cell[0])
+        
+    def title_row_from_datafrme(self, text):
+        """Метод, который создает строку раздела испытаний по данным,
+        полученным из датафрейма
+        """
+        cell = self.table_name.add_row().cells
+        cell[0].merge(cell[6])
+        cell[0].text = str(text)
+        cell[0].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER # выравнивание текста по центру
+        cell[0].paragraphs[0].runs[0].bold = True # выделение жирным
+        cell[0].paragraphs[0].paragraph_format.space_after = Pt(0) # убрать отступ внизу
+        cell[0].paragraphs[0].runs[0].font.size = Pt(12) # установить размер шрифта
+        border_around_cell(cell[0], border="double", sz=6)
         
     
     def create_simple_row(self, num, tag=True):

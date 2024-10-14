@@ -24,7 +24,9 @@ from backend_read import get_cable_mark,\
     table_inner_border_vertical,\
     func_def_test_by_program, \
     read_json_file, \
-    border_form
+    border_form, \
+    get_df_from_json, \
+    list_for_part_row
     
 class Protocol:
     
@@ -178,14 +180,7 @@ class Protocol:
 
     def create_results_table(self):
         doc = Document(self.path)
-        data = read_json_file(self.path_json)
-        results = data.get("8") # словарь с результатами
-        for key, value in data.items():
-            if int(key) == 8:
-                doc.add_paragraph().add_run(str(key + " " + list(value.keys())[0])).bold = True
-            else:
-                pass
-
+        df = get_df_from_json(self.path_json)
         test_table = doc.add_table(rows=2, cols=7)
         test_table.cell(0, 0).width = Cm(6)
         row_for_test = Test_Table(test_table,
@@ -199,6 +194,9 @@ class Protocol:
         func_union_cells(test_table, **cells_union)
         filling_table_heads_all(test_table, list_head_test_table)
         row_for_test.row_for_navigation()
+        for i in range(0, len(df['part'].unique())):
+            row_for_test.title_row_from_datafrme(text=df['part'].unique()[i])
+        
         doc.save(self.path)
         
         
@@ -214,7 +212,7 @@ obj.create_title_list()
 obj.create_two_list()
 obj.create_results_table()
 
-#os.startfile("D:\\My_projects\\Protoсols\\tests_24.docx")
+os.startfile("D:\\My_projects\\Protoсols\\tests_24.docx")
 
 
 
